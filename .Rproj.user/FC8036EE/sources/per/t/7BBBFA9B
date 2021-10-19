@@ -1,0 +1,26 @@
+{
+    "id": "7BBBFA9B",
+    "path": "~/SVM/TD SVM 2021-2022/TD2 donnees non-separables/Ex2 donnees nonseparables.R",
+    "project_path": null,
+    "type": "r_source",
+    "hash": "3652054738",
+    "contents": "",
+    "dirty": false,
+    "created": 1633520946007.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "129,17",
+        "scrollLine": "112"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1633523810,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1633523810157,
+    "read_only": false,
+    "read_only_alternatives": []
+}

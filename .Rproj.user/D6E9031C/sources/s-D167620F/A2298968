@@ -1,0 +1,26 @@
+{
+    "id": "A2298968",
+    "path": "//home-ens.univ-ubs.fr/e2001112/Mes documents/SVM/TD SVM 2021-2022/TD2 donnees non-separables/Ex2 donnees nonseparables.R",
+    "project_path": "TD SVM 2021-2022/TD2 donnees non-separables/Ex2 donnees nonseparables.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": true,
+    "created": 1634123130658.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "32,9",
+        "scrollLine": "19"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1633523810,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1634124328634,
+    "read_only": false,
+    "read_only_alternatives": []
+}
