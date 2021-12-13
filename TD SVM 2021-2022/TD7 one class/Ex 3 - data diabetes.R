@@ -1,0 +1,94 @@
+##########################################################
+# The package "kernlab"
+##########################################################
+##########################################################
+# To install the package "kernlab" execute:
+# En R cliquer: "Packages" ->  Installer le(s) package(s) -> [...France (Lyon2)...] -> kernlab
+# 
+library("kernlab")  # connect library
+
+
+####################################################################
+# données:  "diabetes"
+
+library(mclust)
+data(diabetes)
+str(diabetes)
+
+TrainD = as.matrix(diabetes[diabetes$class == "Normal",-1],bycol=T)
+str(TrainD)
+
+#TestD  = as.matrix(diabetes[diabetes$class != "Normal",-1], bycol=T)
+
+TestD=diabetes[,-1]
+
+# 
+# Determiner le comportement de 3 erreurs en fonction de h:  sigma=1/h, 
+# 
+
+
+TrainY = rep(1,nrow(TrainD))
+
+#TrainD=as.matrix(TrainD)
+#str()
+
+nrow(TrainD)
+length(TrainY)
+
+trainsvm  =  ksvm(TrainD , TrainY, kernel= "rbfdot", kpar=list(sigma=0.2), type="one-svc", cross=5 ,nu=0.2)
+
+######################################
+
+grille.geom = function(a,b,size){
+m=size
+q=exp(   (log(b)-log(a))/(m-1)  )
+q^(0:(m-1))*a
+}
+
+HH=grille.geom(1000,0.1,100)
+
+
+Errappr=NULL
+Errcross=NULL
+
+for(i in 1:length(HH))
+{
+set.seed(765)	
+trainsvm  =  ksvm(TrainD , TrainY, kernel= "rbfdot", kpar=list(sigma=1/HH[i]), type="one-svc", cross=3 ,nu=0.2)
+Errappr[i]=error(trainsvm)
+Errcross[i]=cross(trainsvm)
+}
+
+par(mfrow=c(2,2))
+Errappr
+Errcross
+plot(log(HH),Errcross,type="l", ylim=c(0,1))
+lines(log(HH),Errappr,col="red")
+title("cross")
+
+
+i0=which.min(Errcross)
+h=HH[i0]
+h
+
+trainsvm  =  ksvm(TrainD , TrainY, kernel= "rbfdot", kpar=list(sigma=1/h), type="one-svc", cross=3 ,nu=0.2)
+
+PP=predict(trainsvm, newdata=TestD)
+
+PP=predict(trainsvm, newdata=diabetes[,-1])
+
+YY=ifelse(diabetes[,1]=="Normal",1,0)
+sum(PP!=YY)
+
+
+pairs(TestD)
+pairs(TrainD)
+
+
+
+
+
+
+
+
+

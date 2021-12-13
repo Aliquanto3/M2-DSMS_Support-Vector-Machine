@@ -1,0 +1,152 @@
+##########################################################
+# The package "kernlab"
+##########################################################
+##########################################################
+# To install the package "kernlab" execute:
+# En R cliquer: "Packages" ->  Installer le(s) package(s) -> [...France (Lyon2)...] -> kernlab
+# 
+library("kernlab")  # connect librarylibrary(kernlab)
+
+
+library(pls)
+data(gasoline)
+#gasoline
+names(gasoline)
+
+Y=gasoline$octane
+plot(Y)
+
+X=gasoline$NIR
+
+dim(X)
+
+X[1,]
+
+plot(X[3,])
+
+n=length(X[,1])
+
+plot(X[1,],type="l")
+for(i in 1:60){
+lines(X[i,],type="l")
+}
+
+
+OCT=data.frame(octane=Y, X=X)
+names(OCT)
+head(OCT)
+
+set.seed(123456)
+appr=sample(1:60,2/3*60)
+OCTAPPR=OCT[appr,]
+OCTVER=OCT[-appr,]
+
+head(OCTAPPR)
+
+set.seed(567)
+RR=ksvm(octane ~ .,data = OCTAPPR )
+RR
+
+octappr=predict(RR,newdata=OCTAPPR)
+octverif=predict(RR,newdata=OCTVER)
+
+Errverif = mean((OCTVER$octane - octverif)^2)
+Errappr = mean((OCTAPPR$octane - octappr)^2)
+
+Errverif
+Errappr
+
+
+
+#1. Diviser les donn?es en 2 parties: 2/3 Test et 1/3 Appr (en echantillonan au hazard).
+
+#2. Construire une prediction  ? partir de la partie Appr et clculer l'erreur quadratique      
+#   d'apprentissage et de verification (utiliser le noyau Gaussien: RBF)
+
+#3. Tracer les erreurs d'apprentissage et de test en fonction de la largeur de la 
+#   fenetre h=1/sigma du noyau Gaussien (RBF) pour C, eps fix?s (eps=0.03).
+#   Optimiser le param?tre h. 
+
+grille.geom = function(a,b,size){
+m=size
+q=exp(   (log(b)-log(a))/(m-1)  )
+q^(0:(m-1))*a
+}
+
+HH=grille.geom(5000,1,100)
+
+EQverif=NULL
+EQappr=NULL
+
+
+for(i in 1:length(HH)){
+set.seed(567)
+RR=ksvm(octane ~ .,data = OCTAPPR, kpar = list(sigma=1/HH[i]))
+octappr=predict(RR,newdata=OCTAPPR)
+octverif=predict(RR,newdata=OCTVER)
+Errverif = mean((OCTVER$octane - octverif)^2)
+Errappr = mean((OCTAPPR$octane - octappr)^2)
+EQverif[i]=Errverif
+EQappr[i]=Errappr
+}
+
+
+EQverif
+EQappr
+
+par(mfrow = c(1,1))
+plot(log(HH),EQverif,type="l",ylim=c(0,4))
+lines(log(HH),EQappr,type="l",col="red")
+
+imin = which.min(EQverif)
+HH[imin]
+
+
+#4. Tracer les erreurs d'apprentissage et de test en fonction de eps (noyau Gaussien RBF). 
+#   Utiliser le choix automatique de h. 
+
+#5. Tracer les erreurs d'apprentissage et de test en fonction de la largeur de la 
+#   fenetre h=1/sigma du noyau Gaussien (RBF) pour nu fix?.
+#   Optimiser le param?tre h. 
+
+#6. Tracer les erreurs d'apprentissage et de test en fonction de nu (noyau Gaussien RBF). 
+#   Utiliser le choix automatique de h. 
+
+
+#7. Choisir les param?tres par cross validation. 
+#   Tracer 3 erreurs (d'apprentissage, de cross validation, et de verification) en fonction de 
+#   la largeur de la fenetre h du noyau Gaussien (RBF) pour  C,eps fix?.
+
+#8. Choisir les param?tres par cross validation. 
+#   Tracer 3 erreurs (d'apprentissage, de cross validation, et de verification) en fonction de 
+#   C (h = choix par default, eps fix?) pour le noyau Gaussien (RBF).
+
+
+#9. Choisir les param?tres par cross validation. 
+#   Tracer 3 erreurs (d'apprentissage, de cross validation, et de verification) en fonction de 
+#   nu (h = choix par default) pour le noyau Gaussien (RBF).
+
+
+EQcross=NULL
+EQa=NULL
+for(i in 1:length(HH)){
+set.seed(567)
+RR=ksvm(octane ~ .,data = OCTAPPR, kpar = list(sigma=1/HH[i]), cross=3)
+EQcross[i]=cross(RR)
+EQa[i]=error(RR)
+}
+
+par(mfrow = c(2,1))
+
+plot(log(HH),EQcross,type="l",ylim=c(0,4))
+lines(log(HH),EQa,type="l",col="magenta")
+
+plot(log(HH),EQverif,type="l",ylim=c(0,4))
+lines(log(HH),EQappr,type="l",col="red")
+lines(log(HH),EQcross,type="l",col="blue")
+lines(log(HH),EQa,type="l",col="magenta")
+
+imin = which.min(EQverif)
+HH[imin]
+
+
